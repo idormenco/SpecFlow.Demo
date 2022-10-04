@@ -1,0 +1,11 @@
+  version: '3.4'
+
+  services:
+    postgres:
+      image: postgres
+      environment:
+        POSTGRES_PASSWORD: docker
+        POSTGRES_USER: docker
+        POSTGRES_DB: specflow.demo
+      ports:
+        - 5432:5432
