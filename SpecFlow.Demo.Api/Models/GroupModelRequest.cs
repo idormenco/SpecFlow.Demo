@@ -2,7 +2,7 @@
 
 namespace SpecFlow.Demo.Api.Models;
 
-public sealed record BackpackModelRequest
+public sealed record GroupModelRequest
 {
     [Required] public string Name { get; init; }
 }

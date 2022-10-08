@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SpecFlow.Demo.Api.Entities.Configuration;
 
-internal class BackpackEntityConfiguration : IEntityTypeConfiguration<Backpack>
+internal class GroupEntityConfiguration : IEntityTypeConfiguration<Group>
 {
-    public void Configure(EntityTypeBuilder<Backpack> builder)
+    public void Configure(EntityTypeBuilder<Group> builder)
     {
         builder
             .HasKey(x => x.Id);
@@ -20,9 +20,9 @@ internal class BackpackEntityConfiguration : IEntityTypeConfiguration<Backpack>
             .IsRequired();
 
         builder
-            .HasOne(x => x.Owner)
-            .WithMany(x => x.Backpacks)
-            .HasForeignKey(x => x.OwnerId)
+            .HasOne(e => e.Admin)
+            .WithMany()
+            .HasForeignKey(e => e.AdminId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
