@@ -2,9 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Support\**" />
+    <EmbeddedResource Remove="Support\**" />
+    <None Remove="Support\**" />
+    <SpecFlowFeatureFiles Remove="Support\**" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Support\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SpecFlowObsoleteCodeBehindFiles Remove="Features\Backpack-create - Copy.feature.cs" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Features\Backpack-delete - Copy.feature.cs" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Features\Backpack-update - Copy.feature.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.3.0" />
@@ -21,12 +35,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\" />
-    <Folder Include="Support\" />
+    <ProjectReference Include="..\SpecFlow.Demo.Api\SpecFlow.Demo.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpecFlow.Demo.Api\SpecFlow.Demo.Api.csproj" />
+    <Folder Include="Common\" />
   </ItemGroup>
 
 </Project>

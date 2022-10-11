@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-using SpecFlow.Demo.Api.Tests.Drivers;
 using SpecFlow.Demo.Api.Tests.Extensions;
 
 namespace SpecFlow.Demo.Api.Tests.StepDefinitions;
@@ -9,21 +7,19 @@ namespace SpecFlow.Demo.Api.Tests.StepDefinitions;
 public class BackpackCreateStepDefinitions : IClassFixture<WebServer>
 {
     private readonly WebServer _webServer;
-    private HttpClient? _user;
-    private HttpResponseMessage? _operationResponse;
-    private Guid? _backpackId;
+    private HttpClient _user;
+    private HttpResponseMessage _operationResponse;
+    private Guid _backpackId;
 
     public BackpackCreateStepDefinitions(WebServer webServer)
     {
         _webServer = webServer;
     }
 
-    [Given(@"A user")]
+    [Given(@"An authenticated user")]
     public async Task GivenAUser()
     {
-        _user = _webServer.CreateHttpClient();
-        var (_, _, token) = await UserDriver.RegisterUserAsync(_user);
-        _user.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+        _user = await CreateAuthenticatedClient();
     }
 
     [When(@"creates a backpack")]
@@ -36,12 +32,8 @@ public class BackpackCreateStepDefinitions : IClassFixture<WebServer>
     [Then(@"response contains backpackId")]
     public async Task ThenResponseContainsBackpackId()
     {
-        _operationResponse!.EnsureSuccessStatusCode();
-        var stringResponse = await _operationResponse.Content.ReadAsStringAsync();
-        var response = stringResponse.ParseResponse();
-        string id = response.id.ToString()!;
-
-        _backpackId = Guid.Parse(id);
+        var response = await _operationResponse.ReadAsAsync<BackpackModel>();
+        _backpackId = response.Id;
         Assert.NotEqual(Guid.Empty, _backpackId);
     }
 
@@ -49,10 +41,24 @@ public class BackpackCreateStepDefinitions : IClassFixture<WebServer>
     public async Task ThenNewlyCreatedBackpackAppearsInHisList()
     {
         var result = await _user!.GetAsync("/backpacks");
-        result.EnsureSuccessStatusCode();
-        var content = await result.Content.ReadAsStringAsync();
-        var backpacks = JsonConvert.DeserializeObject<dynamic[]>(content);
+        var backpacks = await result.ReadAsAsync<BackpackModel[]>();
 
-        Assert.Contains(backpacks, x => x.id.ToString() == _backpackId.ToString());
+        Assert.Contains(backpacks, x => x.Id == _backpackId);
     }
+
+    #region topSecret
+    private async Task<HttpClient> CreateAuthenticatedClient()
+    {
+        var client = _webServer.CreateHttpClient();
+        var email = $"{Guid.NewGuid()}@mail.com";
+        var password = $"{Guid.NewGuid()}";
+        var name = $"{Guid.NewGuid()}";
+        var request = new UserRegisterModel { Email = email, Name = name, Password = password };
+        var response = await client.PostAsync("/user/register", request.ToStringContent());
+        var tokenResponse = await response.ReadAsAsync<TokenResponseModel>();
+
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {tokenResponse.Token}");
+        return client;
+    } 
+    #endregion
 }

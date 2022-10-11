@@ -27,8 +27,6 @@ public class WebServer : IDisposable
         Output = output;
         var path = Assembly.GetAssembly(typeof(WebServer))!.Location;
 
-        // Add a dynamic database name.
-
         var hostBuilder = new HostBuilder()
             .UseContentRoot(Path.GetDirectoryName(path))
             .ConfigureAppConfiguration(

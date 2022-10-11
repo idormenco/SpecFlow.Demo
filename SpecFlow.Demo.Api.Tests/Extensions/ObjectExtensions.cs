@@ -10,8 +10,10 @@ public static class ObjectExtensions
         string content = JsonConvert.SerializeObject(data);
         return new StringContent(content, Encoding.UTF8, "application/json");
     }
-    public static dynamic ParseResponse(this string response)
+    public static async Task<T> ReadAsAsync<T>(this HttpResponseMessage response)
     {
-        return JsonConvert.DeserializeObject<dynamic>(response);
+        response.EnsureSuccessStatusCode();
+        var stringResponse = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<T>(stringResponse);
     }
 }

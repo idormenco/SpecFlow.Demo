@@ -183,7 +183,54 @@ public class GroupsController : ControllerBase
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something bad happened", typeof(ProblemDetails))]
     public async Task<IActionResult> RemoveUserFromGroupAsync([FromRoute] Guid groupId, [FromRoute] Guid userId)
     {
-        await Task.CompletedTask;
-        return Ok("Implement me!");
+        var currentUserId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value!);
+        var requestedUserMembership = await _dataContext.GroupsMembers.FirstOrDefaultAsync(gm => gm.UserId == userId && gm.GroupId == groupId);
+        var isGroupAdmin = await _dataContext.Groups.AnyAsync(g => g.Id == groupId && g.AdminId == currentUserId);
+        var isRequestedUserMemberOfGroup = requestedUserMembership != null;
+
+        if (currentUserId == userId && isRequestedUserMemberOfGroup)
+        {
+            if (isGroupAdmin)
+            {
+                return Forbid("Can't leave while you are admin!");
+            }
+        }
+
+        if (!isGroupAdmin || !isRequestedUserMemberOfGroup)
+        {
+            return Forbid();
+        }
+
+        _dataContext.GroupsMembers.Remove(requestedUserMembership);
+        await _dataContext.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Gets groups for current user.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("{groupId:guid}/members")]
+    [SwaggerResponse(StatusCodes.Status200OK, "User groups", typeof(IImmutableList<GroupMemberModel>))]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something bad happened", typeof(ProblemDetails))]
+    public async Task<ActionResult<IImmutableList<GroupModel>>> GetGroupMembers(Guid groupId)
+    {
+        var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value!);
+        var isMemberOfGroup = await _dataContext.GroupsMembers.AnyAsync(x => x.UserId == userId && x.GroupId == groupId);
+
+        if (!isMemberOfGroup)
+        {
+            return Forbid();
+        }
+
+        var groupMembers = await _dataContext
+            .GroupsMembers
+            .Where(gm => gm.GroupId == groupId)
+            .Include(gm => gm.User)
+            .Select(x => new GroupMemberModel(x.UserId, x.User.Name))
+            .ToListAsync();
+
+        return Ok(groupMembers.ToImmutableArray());
     }
 }

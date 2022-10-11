@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -11,6 +12,7 @@ using SpecFlow.Demo.Api.Entities;
 using SpecFlow.Demo.Api.Models;
 using SpecFlow.Demo.Api.Models.Auth;
 using SpecFlow.Demo.Api.Options;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SpecFlow.Demo.Api.Controllers;
 
@@ -31,9 +33,12 @@ public class UsersController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("login")]
-    public ActionResult LoginAsync([FromBody] UserLoginModel request)
+    [SwaggerResponse(StatusCodes.Status200OK, "Token response", typeof(TokenResponseModel))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "User not found")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something bad happened", typeof(ProblemDetails))]
+    public async Task<ActionResult<TokenResponseModel>> LoginAsync([FromBody] UserLoginModel request)
     {
-        var user = Authenticate(request.Email, request.Password);
+        var user = await AuthenticateAsync(request.Email, request.Password);
 
         if (user != null)
         {
@@ -46,6 +51,9 @@ public class UsersController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("register")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Token response", typeof(TokenResponseModel))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "User not found")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something bad happened", typeof(ProblemDetails))]
     public async Task<ActionResult<TokenResponseModel>> RegisterAsync([FromBody] UserRegisterModel request)
     {
         var emailIsUsed = await _dataContext.Users.AnyAsync(u => u.Email.ToLower() == request.Email.ToLower());
@@ -85,12 +93,12 @@ public class UsersController : ControllerBase
             expires: expirationDate,
             signingCredentials: credentials);
 
-        return new TokenResponseModel(new JwtSecurityTokenHandler().WriteToken(token), expirationDate);
+        return new TokenResponseModel(id, name, new JwtSecurityTokenHandler().WriteToken(token), expirationDate);
     }
 
-    private UserModel Authenticate(string email, string password)
+    private async Task<UserModel> AuthenticateAsync(string email, string password)
     {
-        var currentUser = _dataContext.Users.FirstOrDefault(o => o.Email.ToLower() == email.ToLower() && o.Password == password);
+        var currentUser = await _dataContext.Users.FirstOrDefaultAsync(o => o.Email.ToLower() == email.ToLower() && o.Password == password);
 
         if (currentUser != null)
         {

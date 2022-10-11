@@ -19,7 +19,7 @@ namespace SpecFlow.Demo.Api.Tests.Features
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class BackpackCreateFeature : object, Xunit.IClassFixture<BackpackCreateFeature.FixtureData>, System.IDisposable
+    public partial class RemoveMemberFromGroupFeature : object, Xunit.IClassFixture<RemoveMemberFromGroupFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
@@ -28,10 +28,10 @@ namespace SpecFlow.Demo.Api.Tests.Features
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
-#line 1 "Backpack-create.feature"
+#line 1 "GroupUser-remove.feature"
 #line hidden
         
-        public BackpackCreateFeature(BackpackCreateFeature.FixtureData fixtureData, SpecFlow_Demo_Api_Tests_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public RemoveMemberFromGroupFeature(RemoveMemberFromGroupFeature.FixtureData fixtureData, SpecFlow_Demo_Api_Tests_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -40,7 +40,7 @@ namespace SpecFlow.Demo.Api.Tests.Features
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Backpack create", "A user should be able to create backpacks", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Remove Member from Group", "A group admin should be able to remove members from their group", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -80,15 +80,15 @@ namespace SpecFlow.Demo.Api.Tests.Features
             this.TestTearDown();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="User creates backpack")]
-        [Xunit.TraitAttribute("FeatureTitle", "Backpack create")]
-        [Xunit.TraitAttribute("Description", "User creates backpack")]
-        public void UserCreatesBackpack()
+        [Xunit.SkippableFactAttribute(DisplayName="Remove member can be done only by group admin")]
+        [Xunit.TraitAttribute("FeatureTitle", "Remove Member from Group")]
+        [Xunit.TraitAttribute("Description", "Remove member can be done only by group admin")]
+        public void RemoveMemberCanBeDoneOnlyByGroupAdmin()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("User creates backpack", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 5
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove member can be done only by group admin", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 4
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -98,17 +98,23 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
+#line 5
+    testRunner.Given("Alex is an authenticated user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
 #line 6
- testRunner.Given("An authenticated user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.And("Alex creates a group", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 7
- testRunner.When("creates a backpack", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+    testRunner.And("Cristi is an authenticated user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 8
- testRunner.Then("response contains backpackId", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.And("Cristi is a member of Alex\'s group", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 9
- testRunner.And("newly created backpack appears in his list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+    testRunner.When("Alex removes Cristi from group", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 10
+    testRunner.Then("the returned group members list does not contain Cristi", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -121,12 +127,12 @@ this.ScenarioInitialize(scenarioInfo);
             
             public FixtureData()
             {
-                BackpackCreateFeature.FeatureSetup();
+                RemoveMemberFromGroupFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                BackpackCreateFeature.FeatureTearDown();
+                RemoveMemberFromGroupFeature.FeatureTearDown();
             }
         }
     }
