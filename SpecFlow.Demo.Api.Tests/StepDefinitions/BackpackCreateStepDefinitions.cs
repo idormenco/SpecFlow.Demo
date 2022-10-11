@@ -1,3 +1,4 @@
+using System.Net;
 using SpecFlow.Demo.Api.Tests.Extensions;
 
 namespace SpecFlow.Demo.Api.Tests.StepDefinitions;
@@ -46,6 +47,18 @@ public class BackpackCreateStepDefinitions : IClassFixture<WebServer>
         Assert.Contains(backpacks, x => x.Id == _backpackId);
     }
 
+    [Given(@"An user")]
+    public void GivenAnUser()
+    {
+        _user = _webServer.CreateHttpClient();
+    }
+
+    [Then(@"response has 401 status code in response")]
+    public void ThenResponseStatusCodeInResponse()
+    {
+        Assert.Equal(HttpStatusCode.Unauthorized, _operationResponse.StatusCode);
+    }
+
     #region topSecret
     private async Task<HttpClient> CreateAuthenticatedClient()
     {
@@ -59,6 +72,6 @@ public class BackpackCreateStepDefinitions : IClassFixture<WebServer>
 
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {tokenResponse.Token}");
         return client;
-    } 
+    }
     #endregion
 }
