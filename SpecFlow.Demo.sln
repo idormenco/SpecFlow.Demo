@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpecFlow.Demo.Api.Specs", "SpecFlow.Demo.Api.Tests\SpecFlow.Demo.Api.Specs.csproj", "{0CB65BB0-A877-44FF-B261-ED644DB5A9D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpecFlow.Demo.Api.Specs", "SpecFlow.Demo.Api.Specs\SpecFlow.Demo.Api.Specs.csproj", "{0CB65BB0-A877-44FF-B261-ED644DB5A9D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

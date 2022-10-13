@@ -14,13 +14,7 @@
     <SpecFlowObsoleteCodeBehindFiles Remove="Support\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <SpecFlowObsoleteCodeBehindFiles Remove="Features\Backpack-create - Copy.feature.cs" />
-    <SpecFlowObsoleteCodeBehindFiles Remove="Features\Backpack-delete - Copy.feature.cs" />
-    <SpecFlowObsoleteCodeBehindFiles Remove="Features\Backpack-update - Copy.feature.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.7.0" />
     <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.9" />
