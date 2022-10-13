@@ -40,7 +40,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\" />
+    <Folder Include="Features\" />
+    <Folder Include="StepDefinitions\" />
   </ItemGroup>
 
 </Project>
