@@ -1,13 +1,14 @@
 using System.Net;
-using SpecFlow.Demo.Api.Tests.Extensions;
+using FluentAssertions;
+using SpecFlow.Demo.Api.Specs.Extensions;
 
-namespace SpecFlow.Demo.Api.Tests.StepDefinitions;
+namespace SpecFlow.Demo.Api.Specs.StepDefinitions;
 
 [Binding]
 [Scope(Feature = "Backpack update")]
-public class BackpackUpdateStepDefinitions : IClassFixture<WebServer>
+public class BackpackUpdateStepDefinitions : IClassFixture<WebTestServer>
 {
-    private readonly WebServer _webServer;
+    private readonly WebTestServer _webTestServer;
     private HttpClient _backpackOwner;
     private Guid _backpackId;
     private BackpackModel[] _ownerBackpacks;
@@ -15,15 +16,15 @@ public class BackpackUpdateStepDefinitions : IClassFixture<WebServer>
     private HttpClient _anotherAuthenticatedUser;
     private HttpResponseMessage _httpResponseMessage;
 
-    public BackpackUpdateStepDefinitions(WebServer webServer)
+    public BackpackUpdateStepDefinitions(WebTestServer webTestServer)
     {
-        _webServer = webServer;
+        _webTestServer = webTestServer;
     }
 
     [Given(@"An authenticated user")]
     public async Task GivenAnAuthenticatedUser()
     {
-        _backpackOwner = await CreateAuthenticatedClient();
+        _backpackOwner = await _webTestServer.CreateAuthenticatedClient();
     }
 
     [Given(@"user creates a backpack named ""([^""]*)""")]
@@ -53,13 +54,13 @@ public class BackpackUpdateStepDefinitions : IClassFixture<WebServer>
     [Then(@"returned backpacks contain updated backpack")]
     public void ThenReturnedBackpacksContainUpdatedBackpack()
     {
-        Assert.Contains(_ownerBackpacks, (x) => x.Id == _backpackId && x.Name == _backpackName);
+        _ownerBackpacks.Should().Contain(x => x.Id == _backpackId && x.Name == _backpackName);
     }
 
     [Given(@"Another authenticated user")]
     public async Task GivenAnotherAuthenticatedUser()
     {
-        _anotherAuthenticatedUser = await CreateAuthenticatedClient();
+        _anotherAuthenticatedUser = await _webTestServer.CreateAuthenticatedClient();
     }
 
     [When(@"user edits backpack created by other user")]
@@ -71,20 +72,6 @@ public class BackpackUpdateStepDefinitions : IClassFixture<WebServer>
     [Then(@"gets Forbidden in response")]
     public void ThenGetsForbiddenInResponse()
     {
-        Assert.Equal(HttpStatusCode.Forbidden, _httpResponseMessage.StatusCode);
-    }
-
-    private async Task<HttpClient> CreateAuthenticatedClient()
-    {
-        var client = _webServer.CreateHttpClient();
-        var email = $"{Guid.NewGuid()}@mail.com";
-        var password = $"{Guid.NewGuid()}";
-        var name = $"{Guid.NewGuid()}";
-        var request = new UserRegisterModel { Email = email, Name = name, Password = password };
-        var response = await client.PostAsync("/user/register", request.ToStringContent());
-        var tokenResponse = await response.ReadAsAsync<TokenResponseModel>();
-
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {tokenResponse.Token}");
-        return client;
+        _httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

@@ -1,14 +1,14 @@
-﻿using SpecFlow.Demo.Api.Tests.Extensions;
+﻿using SpecFlow.Demo.Api.Specs.Extensions;
 
-namespace SpecFlow.Demo.Api.Tests.Common;
+namespace SpecFlow.Demo.Api.Specs.Common;
 
 /// <summary>
 /// This is a base class for other step definitions.
 /// Do not decorate it with [Binding]!
 /// </summary>
-public abstract class BaseStepDefinition : IClassFixture<WebServer>
+public abstract class BaseStepDefinition : IClassFixture<WebTestServer>
 {
-    private readonly WebServer _webServer;
+    private readonly WebTestServer _webTestServer;
     private HttpClient _alex;
     private HttpClient _cristi;
     private HttpClient _irina;
@@ -31,18 +31,18 @@ public abstract class BaseStepDefinition : IClassFixture<WebServer>
     /// </summary>
     public HttpClient Irina => _irina;
 
-    public Guid AlexId => _alexId;
-    public Guid CristiId => _cristiId;
-    public Guid IrinaId => _irinaId;
-
     /// <summary>
     /// ion is a not authenticated user
     /// </summary>
     public HttpClient Ion => _ion;
 
-    public BaseStepDefinition(WebServer webServer)
+    public Guid AlexId => _alexId;
+    public Guid CristiId => _cristiId;
+    public Guid IrinaId => _irinaId;
+
+    public BaseStepDefinition(WebTestServer webTestServer)
     {
-        _webServer = webServer;
+        _webTestServer = webTestServer;
     }
 
     [Given(@"Alex is an authenticated user")]
@@ -66,7 +66,7 @@ public abstract class BaseStepDefinition : IClassFixture<WebServer>
     [Given(@"Ion is a non-authenticated user")]
     public void GivenIonIsANonAuthenticatedUser()
     {
-        _ion = _webServer.CreateHttpClient();
+        _ion = _webTestServer.CreateHttpClient();
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public abstract class BaseStepDefinition : IClassFixture<WebServer>
     private async Task<(HttpClient, Guid id, string name)> CreateAuthenticatedUser(string name)
     {
         name = $"{name}_{Guid.NewGuid()}";
-        var client = _webServer.CreateHttpClient();
+        var client = _webTestServer.CreateHttpClient();
         var email = $"{name}@mail.com";
         var password = $"{Guid.NewGuid()}";
         var request = new UserRegisterModel { Email = email, Name = name, Password = password };

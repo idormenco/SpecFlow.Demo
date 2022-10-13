@@ -1,18 +1,19 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
+using SpecFlow.Demo.Api.Specs.Extensions;
 using Xunit.Abstractions;
 
-namespace SpecFlow.Demo.Api.Tests;
+namespace SpecFlow.Demo.Api.Specs;
 
-public class WebServer : IDisposable
+public class WebTestServer : IDisposable
 {
-    private readonly TestServer _server;
+    private readonly TestServer _testServer;
     private bool _disposed;
     private readonly List<HttpClient> _clients = new();
 
@@ -20,12 +21,12 @@ public class WebServer : IDisposable
     public ITestOutputHelper Output { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WebServer"/> class.
+    /// Initializes a new instance of the <see cref="WebTestServer"/> class.
     /// </summary>
-    public WebServer(ITestOutputHelper output)
+    public WebTestServer(ITestOutputHelper output)
     {
         Output = output;
-        var path = Assembly.GetAssembly(typeof(WebServer))!.Location;
+        var path = Assembly.GetAssembly(typeof(WebTestServer))!.Location;
 
         var hostBuilder = new HostBuilder()
             .UseContentRoot(Path.GetDirectoryName(path))
@@ -56,17 +57,17 @@ public class WebServer : IDisposable
         dataContext.Database.Migrate();
 
         host.Start();
-        _server = host.GetTestServer();
+        _testServer = host.GetTestServer();
     }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="WebServer"/> class.
+    /// Finalizes an instance of the <see cref="WebTestServer"/> class.
     /// </summary>
-    ~WebServer() => Dispose(false);
+    ~WebTestServer() => Dispose(false);
 
     public HttpClient CreateHttpClient()
     {
-        var client = _server.CreateClient();
+        var client = _testServer.CreateClient();
         _clients.Add(client);
         return client;
     }
@@ -100,6 +101,23 @@ public class WebServer : IDisposable
         }
 
         _clients.ForEach(c => c.Dispose());
-        _server.Dispose();
+        _testServer.Dispose();
     }
+
+
+    #region secret_sauce
+    public async Task<HttpClient> CreateAuthenticatedClient()
+    {
+        var client = CreateHttpClient();
+        var email = $"{Guid.NewGuid()}@mail.com";
+        var password = $"{Guid.NewGuid()}";
+        var name = $"{Guid.NewGuid()}";
+        var request = new UserRegisterModel { Email = email, Name = name, Password = password };
+        var response = await client.PostAsync("/user/register", request.ToStringContent());
+        var tokenResponse = await response.ReadAsAsync<TokenResponseModel>();
+
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {tokenResponse.Token}");
+        return client;
+    }
+    #endregion
 }

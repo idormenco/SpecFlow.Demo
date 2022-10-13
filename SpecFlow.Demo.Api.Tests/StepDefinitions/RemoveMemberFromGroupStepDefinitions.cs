@@ -1,14 +1,15 @@
-using SpecFlow.Demo.Api.Tests.Common;
-using SpecFlow.Demo.Api.Tests.Extensions;
+using FluentAssertions;
+using SpecFlow.Demo.Api.Specs.Common;
+using SpecFlow.Demo.Api.Specs.Extensions;
 
-namespace SpecFlow.Demo.Api.Tests.StepDefinitions;
+namespace SpecFlow.Demo.Api.Specs.StepDefinitions;
 
 [Binding]
 public class RemoveMemberFromGroupStepDefinitions : BaseStepDefinition
 {
     private GroupModel _group;
 
-    public RemoveMemberFromGroupStepDefinitions(WebServer webServer) : base(webServer)
+    public RemoveMemberFromGroupStepDefinitions(WebTestServer webTestServer) : base(webTestServer)
     {
     }
 
@@ -41,8 +42,7 @@ public class RemoveMemberFromGroupStepDefinitions : BaseStepDefinition
     {
         var httpResponseMessage = await Alex.GetAsync($"/group/{_group.Id}/members");
         var members = await httpResponseMessage.ReadAsAsync<GroupMemberModel[]>();
-        Assert.Single(members);
-        Assert.DoesNotContain(members, member => member.Id == CristiId);
+        members.Should().HaveCount(1);
+        members.Should().NotContain(member => member.Id == CristiId);
     }
-
 }

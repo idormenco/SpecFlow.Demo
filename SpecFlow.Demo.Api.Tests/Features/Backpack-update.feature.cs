@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace SpecFlow.Demo.Api.Tests.Features
+namespace SpecFlow.Demo.Api.Specs.Features
 {
     using TechTalk.SpecFlow;
     using System;
@@ -31,7 +31,7 @@ namespace SpecFlow.Demo.Api.Tests.Features
 #line 1 "Backpack-update.feature"
 #line hidden
         
-        public BackpackUpdateFeature(BackpackUpdateFeature.FixtureData fixtureData, SpecFlow_Demo_Api_Tests_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public BackpackUpdateFeature(BackpackUpdateFeature.FixtureData fixtureData, SpecFlow_Demo_Api_Specs_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();

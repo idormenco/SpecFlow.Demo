@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Text;
+﻿using System.Text;
+using Newtonsoft.Json;
 
-namespace SpecFlow.Demo.Api.Tests.Extensions;
+namespace SpecFlow.Demo.Api.Specs.Extensions;
 
 public static class ObjectExtensions
 {

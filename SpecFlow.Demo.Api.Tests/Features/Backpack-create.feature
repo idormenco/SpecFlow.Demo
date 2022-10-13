@@ -2,13 +2,12 @@
 
 A user should be able to create backpacks
 
-Scenario: Autheticated users can create backpacks
-	Given An authenticated user
-	When creates a backpack
-	Then response contains backpackId
-	And newly created backpack appears in his list
+Scenario: An authenticated user creates a backpack
+	Given an authenticated user
+	When user creates a backpack
+	Then created backpack appears in his backpack list
 
-Scenario: Non autheticated users are not allowed to create backpacks
-	Given An user
-	When creates a backpack
-	Then response has 401 status code in response
+Scenario: An non-authenticated cannot create a backpack
+	Given an non-authenticated user
+	When user creates a backpack
+	Then 401NonAuthenticated response

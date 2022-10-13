@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace SpecFlow.Demo.Api.Tests.Features
+namespace SpecFlow.Demo.Api.Specs.Features
 {
     using TechTalk.SpecFlow;
     using System;
@@ -31,7 +31,7 @@ namespace SpecFlow.Demo.Api.Tests.Features
 #line 1 "Backpack-create.feature"
 #line hidden
         
-        public BackpackCreateFeature(BackpackCreateFeature.FixtureData fixtureData, SpecFlow_Demo_Api_Tests_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public BackpackCreateFeature(BackpackCreateFeature.FixtureData fixtureData, SpecFlow_Demo_Api_Specs_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -80,14 +80,14 @@ namespace SpecFlow.Demo.Api.Tests.Features
             this.TestTearDown();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="Autheticated users can create backpacks")]
+        [Xunit.SkippableFactAttribute(DisplayName="An authenticated user creates a backpack")]
         [Xunit.TraitAttribute("FeatureTitle", "Backpack create")]
-        [Xunit.TraitAttribute("Description", "Autheticated users can create backpacks")]
-        public void AutheticatedUsersCanCreateBackpacks()
+        [Xunit.TraitAttribute("Description", "An authenticated user creates a backpack")]
+        public void AnAuthenticatedUserCreatesABackpack()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Autheticated users can create backpacks", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("An authenticated user creates a backpack", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 5
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -99,30 +99,27 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
 #line 6
- testRunner.Given("An authenticated user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("an authenticated user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 7
- testRunner.When("creates a backpack", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("user creates a backpack", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 8
- testRunner.Then("response contains backpackId", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-#line 9
- testRunner.And("newly created backpack appears in his list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Then("created backpack appears in his backpack list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="Non autheticated users are not allowed to create backpacks")]
+        [Xunit.SkippableFactAttribute(DisplayName="An non-authenticated cannot create a backpack")]
         [Xunit.TraitAttribute("FeatureTitle", "Backpack create")]
-        [Xunit.TraitAttribute("Description", "Non autheticated users are not allowed to create backpacks")]
-        public void NonAutheticatedUsersAreNotAllowedToCreateBackpacks()
+        [Xunit.TraitAttribute("Description", "An non-authenticated cannot create a backpack")]
+        public void AnNon_AuthenticatedCannotCreateABackpack()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Non autheticated users are not allowed to create backpacks", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 11
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("An non-authenticated cannot create a backpack", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 10
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -132,14 +129,14 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
+#line 11
+ testRunner.Given("an non-authenticated user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
 #line 12
- testRunner.Given("An user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.When("user creates a backpack", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 13
- testRunner.When("creates a backpack", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line hidden
-#line 14
- testRunner.Then("response has 401 status code in response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("401NonAuthenticated response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

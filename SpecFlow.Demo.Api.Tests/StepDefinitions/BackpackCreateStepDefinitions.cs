@@ -1,77 +1,57 @@
 using System.Net;
-using SpecFlow.Demo.Api.Tests.Extensions;
+using FluentAssertions;
+using SpecFlow.Demo.Api.Specs.Extensions;
 
-namespace SpecFlow.Demo.Api.Tests.StepDefinitions;
+namespace SpecFlow.Demo.Api.Specs.StepDefinitions;
 
 [Binding]
 [Scope(Feature = "Backpack create")]
-public class BackpackCreateStepDefinitions : IClassFixture<WebServer>
+public class BackpackCreateStepDefinitions : IClassFixture<WebTestServer>
 {
-    private readonly WebServer _webServer;
-    private HttpClient _user;
-    private HttpResponseMessage _operationResponse;
-    private Guid _backpackId;
+    private readonly WebTestServer _webTestServer;
+    private HttpClient _client;
+    private HttpResponseMessage _response;
 
-    public BackpackCreateStepDefinitions(WebServer webServer)
+    public BackpackCreateStepDefinitions(WebTestServer webTestServer)
     {
-        _webServer = webServer;
+        _webTestServer = webTestServer;
     }
 
-    [Given(@"An authenticated user")]
+    [Given(@"an authenticated user")]
     public async Task GivenAUser()
     {
-        _user = await CreateAuthenticatedClient();
+        _client = await _webTestServer.CreateAuthenticatedClient();
     }
 
-    [When(@"creates a backpack")]
-    public async Task WhenCreatesABackpack()
+    [When(@"user creates a backpack")]
+    public async Task WhenUserCreatesABackpack()
     {
-        var content = new { name = "my cool backpack" }.ToStringContent();
-        _operationResponse = await _user!.PostAsync("/backpack", content);
+        var backpackModelRequest = new BackpackModelRequest { Name = "a backpack" };
+
+        _response = await _client.PostAsync("/backpack", backpackModelRequest.ToStringContent());
     }
 
-    [Then(@"response contains backpackId")]
-    public async Task ThenResponseContainsBackpackId()
+    [Then(@"created backpack appears in his backpack list")]
+    public async Task ThenCreatedBackpackAppearsInHisBackpackList()
     {
-        var response = await _operationResponse.ReadAsAsync<BackpackModel>();
-        _backpackId = response.Id;
-        Assert.NotEqual(Guid.Empty, _backpackId);
+        var response = await _client.GetAsync("/backpacks");
+        var backpacks = await response.ReadAsAsync<BackpackModel[]>();
+        var backpack = await _response.ReadAsAsync<BackpackModel>();
+
+        backpacks.Should().HaveCount(1);
+        backpacks.First().Id.Should().Be(backpack.Id);
+        backpacks.First().Name.Should().Be(backpack.Name);
     }
 
-    [Then(@"newly created backpack appears in his list")]
-    public async Task ThenNewlyCreatedBackpackAppearsInHisList()
+    [Given(@"an non-authenticated user")]
+    public void GivenAnNon_AuthenticatedUser()
     {
-        var result = await _user!.GetAsync("/backpacks");
-        var backpacks = await result.ReadAsAsync<BackpackModel[]>();
-
-        Assert.Contains(backpacks, x => x.Id == _backpackId);
+        _client = _webTestServer.CreateHttpClient();
     }
 
-    [Given(@"An user")]
-    public void GivenAnUser()
+    [Then(@"401NonAuthenticated response")]
+    public void ThenNonAuthenticatedResponse()
     {
-        _user = _webServer.CreateHttpClient();
+        _response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
-
-    [Then(@"response has 401 status code in response")]
-    public void ThenResponseStatusCodeInResponse()
-    {
-        Assert.Equal(HttpStatusCode.Unauthorized, _operationResponse.StatusCode);
-    }
-
-    #region topSecret
-    private async Task<HttpClient> CreateAuthenticatedClient()
-    {
-        var client = _webServer.CreateHttpClient();
-        var email = $"{Guid.NewGuid()}@mail.com";
-        var password = $"{Guid.NewGuid()}";
-        var name = $"{Guid.NewGuid()}";
-        var request = new UserRegisterModel { Email = email, Name = name, Password = password };
-        var response = await client.PostAsync("/user/register", request.ToStringContent());
-        var tokenResponse = await response.ReadAsAsync<TokenResponseModel>();
-
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {tokenResponse.Token}");
-        return client;
-    }
-    #endregion
 }
